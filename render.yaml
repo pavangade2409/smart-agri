@@ -273,8 +273,6 @@ services:
   - type: web
     name: smart-agri-frontend
     runtime: static
-    plan: free
-    region: oregon
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
