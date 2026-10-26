@@ -1,0 +1,297 @@
+databases:
+  - name: smart-agri-db
+    databaseName: smart_agri
+    user: smart_agri
+    plan: free
+    region: singapore
+
+services:
+  - type: web
+    name: smart-agri-auth
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: auth-service
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: smart-agri-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: smart-agri-db
+          property: port
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: smart-agri-db
+          property: database
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: smart-agri-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: smart-agri-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: smart-agri-farm
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: farm-service
+
+  - type: web
+    name: smart-agri-sensor
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: sensor-service
+
+  - type: web
+    name: smart-agri-weather
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: weather-service
+
+  - type: web
+    name: smart-agri-crop
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: crop-service
+
+  - type: web
+    name: smart-agri-irrigation
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: irrigation-service
+      - key: AGRI_SENSOR_SCHEME
+        value: https
+      - key: AGRI_SENSOR_HOST
+        fromService:
+          type: web
+          name: smart-agri-sensor
+          property: host
+
+  - type: web
+    name: smart-agri-infrastructure
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: infrastructure-service
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: smart-agri-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: smart-agri-db
+          property: port
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: smart-agri-db
+          property: database
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: smart-agri-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: smart-agri-db
+          property: password
+
+  - type: web
+    name: smart-agri-farmer-agent
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: farmer-agent
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: smart-agri-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: smart-agri-db
+          property: port
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: smart-agri-db
+          property: database
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: smart-agri-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: smart-agri-db
+          property: password
+      - key: AGRI_SERVICES_FARM_SCHEME
+        value: https
+      - key: AGRI_SERVICES_FARM_HOST
+        fromService:
+          type: web
+          name: smart-agri-farm
+          property: host
+      - key: AGRI_SERVICES_CROP_SCHEME
+        value: https
+      - key: AGRI_SERVICES_CROP_HOST
+        fromService:
+          type: web
+          name: smart-agri-crop
+          property: host
+      - key: AGRI_SERVICES_SENSOR_SCHEME
+        value: https
+      - key: AGRI_SERVICES_SENSOR_HOST
+        fromService:
+          type: web
+          name: smart-agri-sensor
+          property: host
+      - key: AGRI_SERVICES_WEATHER_SCHEME
+        value: https
+      - key: AGRI_SERVICES_WEATHER_HOST
+        fromService:
+          type: web
+          name: smart-agri-weather
+          property: host
+      - key: AGRI_SERVICES_IRRIGATION_SCHEME
+        value: https
+      - key: AGRI_SERVICES_IRRIGATION_HOST
+        fromService:
+          type: web
+          name: smart-agri-irrigation
+          property: host
+      - key: AGRI_SERVICES_INFRASTRUCTURE_SCHEME
+        value: https
+      - key: AGRI_SERVICES_INFRASTRUCTURE_HOST
+        fromService:
+          type: web
+          name: smart-agri-infrastructure
+          property: host
+
+  - type: web
+    name: smart-agri-api-gateway
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: MODULE
+        value: api-gateway
+      - key: APP_CORS_FRONTEND_ORIGIN
+        fromService:
+          type: web
+          name: smart-agri-frontend
+          property: host
+      - key: AGRI_AUTH_SCHEME
+        value: https
+      - key: AGRI_AUTH_HOST
+        fromService:
+          type: web
+          name: smart-agri-auth
+          property: host
+      - key: AGRI_FARM_SCHEME
+        value: https
+      - key: AGRI_FARM_HOST
+        fromService:
+          type: web
+          name: smart-agri-farm
+          property: host
+      - key: AGRI_SENSOR_SCHEME
+        value: https
+      - key: AGRI_SENSOR_HOST
+        fromService:
+          type: web
+          name: smart-agri-sensor
+          property: host
+      - key: AGRI_WEATHER_SCHEME
+        value: https
+      - key: AGRI_WEATHER_HOST
+        fromService:
+          type: web
+          name: smart-agri-weather
+          property: host
+      - key: AGRI_CROP_SCHEME
+        value: https
+      - key: AGRI_CROP_HOST
+        fromService:
+          type: web
+          name: smart-agri-crop
+          property: host
+      - key: AGRI_IRRIGATION_SCHEME
+        value: https
+      - key: AGRI_IRRIGATION_HOST
+        fromService:
+          type: web
+          name: smart-agri-irrigation
+          property: host
+      - key: AGRI_FARMER_AGENT_SCHEME
+        value: https
+      - key: AGRI_FARMER_AGENT_HOST
+        fromService:
+          type: web
+          name: smart-agri-farmer-agent
+          property: host
+
+  - type: web
+    name: smart-agri-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_HOST
+        fromService:
+          type: web
+          name: smart-agri-api-gateway
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

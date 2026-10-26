@@ -22,11 +22,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter) {
-
-        this.jwtAuthenticationFilter =
-                jwtAuthenticationFilter;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -34,84 +31,41 @@ public class SecurityConfig {
             HttpSecurity http) throws Exception {
 
         http
+            // REST API + JWT is stateless, so CSRF is not required
+            .csrf(csrf -> csrf.disable())
 
-            // ==========================================
-            // CSRF
-            // ==========================================
-
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers(
-                    "/h2-console/**"
-                )
-            )
-
-            // ==========================================
-            // H2 Console iframe
-            // ==========================================
-
-            .headers(headers -> headers
-                .frameOptions(frame ->
-                    frame.sameOrigin()
-                )
-            )
-
-            // ==========================================
             // JWT Stateless
-            // ==========================================
-
             .sessionManagement(session ->
                 session.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS
                 )
             )
 
-            // ==========================================
             // Authorization
-            // ==========================================
-
             .authorizeHttpRequests(auth -> auth
 
-                // H2 Console
                 .requestMatchers(
+                    "/api/auth/register",
+                    "/api/auth/login",
+                    "/api/auth/otp/**",
+                    "/api/auth/users",
+                    "/api/auth/users/**",
+                    "/actuator/health",
+                    "/actuator/info",
                     "/h2-console/**"
                 ).permitAll()
 
-                // Register
-                .requestMatchers(
-                    "/api/auth/register"
-                ).permitAll()
-
-                // Login
-                .requestMatchers(
-                    "/api/auth/login"
-                ).permitAll()
-
-                // OTP
-                .requestMatchers(
-                    "/api/auth/otp/**"
-                ).permitAll()
-
-                // Users - development testing
-                .requestMatchers(
-                    "/api/auth/users",
-                    "/api/auth/users/**"
-                ).permitAll()
-
-                // Actuator
-                .requestMatchers(
-                    "/actuator/health",
-                    "/actuator/info"
-                ).permitAll()
-
-                // Everything else
-                .anyRequest()
-                .authenticated()
+                .anyRequest().authenticated()
             )
 
-            // ==========================================
-            // JWT Filter
-            // ==========================================
+            // H2 Console
+            .headers(headers ->
+                headers.frameOptions(frame ->
+                    frame.sameOrigin()
+                )
+            )
 
+            // JWT Filter
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class
@@ -120,28 +74,16 @@ public class SecurityConfig {
         return http.build();
     }
 
-
-    // ==============================================
-    // Password Encoder
-    // ==============================================
-
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
-
-
-    // ==============================================
-    // Authentication Manager
-    // ==============================================
 
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration)
             throws Exception {
 
-        return configuration
-                .getAuthenticationManager();
+        return configuration.getAuthenticationManager();
     }
 }

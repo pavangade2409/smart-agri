@@ -1,0 +1,12 @@
+.git
+.github
+.metadata
+.vscode
+_tmp_jar
+_tmp_src
+**/target
+**/data
+**/node_modules
+**/*.log
+**/.env*
+frontend/dist

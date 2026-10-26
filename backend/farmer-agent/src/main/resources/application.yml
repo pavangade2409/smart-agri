@@ -1,0 +1,69 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: farmer-agent
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:smart_agri}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    show-sql: false
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: qwen3:4b
+      embedding:
+        model: mxbai-embed-large
+
+    model:
+      chat: ollama
+      embedding: ollama
+      audio:
+        speech: none
+        transcription: none
+
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1024
+
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+  endpoint:
+    health:
+      show-details: always
+
+agri:
+  services:
+    farm-url: ${AGRI_SERVICES_FARM_SCHEME:http}://${AGRI_SERVICES_FARM_HOST:localhost:8082}
+    crop-url: ${AGRI_SERVICES_CROP_SCHEME:http}://${AGRI_SERVICES_CROP_HOST:localhost:8085}
+    sensor-url: ${AGRI_SERVICES_SENSOR_SCHEME:http}://${AGRI_SERVICES_SENSOR_HOST:localhost:8083}
+    weather-url: ${AGRI_SERVICES_WEATHER_SCHEME:http}://${AGRI_SERVICES_WEATHER_HOST:localhost:8084}
+    irrigation-url: ${AGRI_SERVICES_IRRIGATION_SCHEME:http}://${AGRI_SERVICES_IRRIGATION_HOST:localhost:8086}
+    infrastructure-url: ${AGRI_SERVICES_INFRASTRUCTURE_SCHEME:http}://${AGRI_SERVICES_INFRASTRUCTURE_HOST:localhost:8087}
+
+tavily:
+  api-key: ${TAVILY_API_KEY:}
+  base-url: https://api.tavily.com

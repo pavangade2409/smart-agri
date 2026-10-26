@@ -1,0 +1,22 @@
+.crops-page { max-width: 1200px; margin: 0 auto; }
+.crops-page__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.5rem; }
+.crops-page__eyebrow { margin-bottom: .35rem; color: var(--accent-color); font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.crops-page h2 { font-size: 2rem; }
+.crops-page__header p:not(.crops-page__eyebrow) { margin-top: .5rem; color: var(--text-light); }
+.crops-page__count { padding: .75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; color: var(--primary-color); font-weight: 700; }
+.crops-search { display: flex; align-items: center; gap: .5rem; max-width: 480px; margin-bottom: 1.5rem; padding: .65rem .85rem; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; }
+.crops-search input { width: 100%; border: 0; outline: 0; color: var(--text-dark); font: inherit; }
+.crops-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+.crop-card { padding: 1.25rem; border: 1px solid var(--border-color); border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgb(20 37 27 / 5%); }
+.crop-card__topline { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.crop-card__code { color: var(--accent-color); font-size: .78rem; font-weight: 700; letter-spacing: .06em; }
+.crop-card h3 { margin-top: 1rem; font-size: 1.15rem; }
+.crop-card__scientific { min-height: 2.5rem; margin-top: .35rem; color: var(--text-light); font-size: .88rem; font-style: italic; }
+.crop-card__details { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--bg-lighter); }
+.crop-card__details dt { color: var(--text-light); font-size: .78rem; }
+.crop-card__details dd { margin: .2rem 0 0; color: var(--primary-color); font-size: .9rem; font-weight: 600; }
+.crops-empty-state { padding: 4rem 1.5rem; border: 1px dashed var(--border-color); border-radius: 12px; background: #fff; text-align: center; }
+.crops-empty-state > span { display: block; margin-bottom: .75rem; font-size: 2.5rem; }
+.crops-empty-state p { margin-top: .5rem; color: var(--text-light); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+@media (max-width: 640px) { .crops-page__header { align-items: stretch; flex-direction: column; } }

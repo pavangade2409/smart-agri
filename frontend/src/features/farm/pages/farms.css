@@ -1,0 +1,141 @@
+.farms-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.farms-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.farms-page__eyebrow {
+  margin-bottom: 0.35rem;
+  color: var(--accent-color);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.farms-page h2 {
+  font-size: 2rem;
+}
+
+.farms-page__description {
+  margin-top: 0.5rem;
+  color: var(--text-light);
+}
+
+.farms-page__summary {
+  min-width: 150px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: white;
+  text-align: right;
+}
+
+.farms-page__summary span,
+.farm-card__metrics span {
+  display: block;
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+.farms-page__summary strong {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.farms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.farm-card {
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 8px rgb(20 37 27 / 5%);
+}
+
+.farm-card__topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.farm-card__icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 10px;
+  background: #e8f5e9;
+  font-size: 1.35rem;
+}
+
+.farm-card h3 {
+  font-size: 1.15rem;
+}
+
+.farm-card__location {
+  min-height: 2.5rem;
+  margin-top: 0.45rem;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.farm-card__metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bg-lighter);
+}
+
+.farm-card__metrics strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+}
+
+.farms-empty-state {
+  padding: 4rem 1.5rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
+  background: white;
+  text-align: center;
+}
+
+.farms-empty-state > span {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 2.5rem;
+}
+
+.farms-empty-state p {
+  margin-top: 0.5rem;
+  color: var(--text-light);
+}
+
+@media (max-width: 640px) {
+  .farms-page__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .farms-page__summary {
+    text-align: left;
+  }
+}
