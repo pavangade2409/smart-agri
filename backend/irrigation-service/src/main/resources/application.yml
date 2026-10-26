@@ -1,5 +1,5 @@
 server:
-  port: 8086
+  port: ${PORT:8086}
 
 spring:
 
@@ -50,10 +50,10 @@ springdoc:
 services:
 
   weather:
-    base-url: http://localhost:8084
+    base-url: ${SERVICE_SCHEME:http}://${WEATHER_SERVICE_HOST:localhost:8084}
 
   sensor:
-    base-url: ${AGRI_SENSOR_SCHEME:http}://${AGRI_SENSOR_HOST:localhost:8083}
+    base-url: ${SERVICE_SCHEME:http}://${SENSOR_SERVICE_HOST:localhost:8083}
 
   device:
-    base-url: http://localhost:8086
+    base-url: ${SERVICE_SCHEME:http}://${IRRIGATION_SERVICE_HOST:localhost:8086}

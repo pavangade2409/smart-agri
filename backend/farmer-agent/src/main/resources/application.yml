@@ -1,13 +1,13 @@
 server:
-  port: 8090
+  port: ${PORT:8090}
 
 spring:
   application:
     name: farmer-agent
 
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:smart_agri}
-    username: ${POSTGRES_USER:postgres}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:smart_agri}
+    username: ${DB_USER:postgres}
     password: ${POSTGRES_PASSWORD:}
     driver-class-name: org.postgresql.Driver
 
@@ -19,7 +19,7 @@ spring:
 
   ai:
     ollama:
-      base-url: http://localhost:11434
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
       chat:
         model: qwen3:4b
       embedding:
@@ -57,12 +57,12 @@ management:
 
 agri:
   services:
-    farm-url: ${AGRI_SERVICES_FARM_SCHEME:http}://${AGRI_SERVICES_FARM_HOST:localhost:8082}
-    crop-url: ${AGRI_SERVICES_CROP_SCHEME:http}://${AGRI_SERVICES_CROP_HOST:localhost:8085}
-    sensor-url: ${AGRI_SERVICES_SENSOR_SCHEME:http}://${AGRI_SERVICES_SENSOR_HOST:localhost:8083}
-    weather-url: ${AGRI_SERVICES_WEATHER_SCHEME:http}://${AGRI_SERVICES_WEATHER_HOST:localhost:8084}
-    irrigation-url: ${AGRI_SERVICES_IRRIGATION_SCHEME:http}://${AGRI_SERVICES_IRRIGATION_HOST:localhost:8086}
-    infrastructure-url: ${AGRI_SERVICES_INFRASTRUCTURE_SCHEME:http}://${AGRI_SERVICES_INFRASTRUCTURE_HOST:localhost:8087}
+    farm-url: ${SERVICE_SCHEME:http}://${FARM_SERVICE_HOST:localhost:8082}
+    crop-url: ${SERVICE_SCHEME:http}://${CROP_SERVICE_HOST:localhost:8085}
+    sensor-url: ${SERVICE_SCHEME:http}://${SENSOR_SERVICE_HOST:localhost:8083}
+    weather-url: ${SERVICE_SCHEME:http}://${WEATHER_SERVICE_HOST:localhost:8084}
+    irrigation-url: ${SERVICE_SCHEME:http}://${IRRIGATION_SERVICE_HOST:localhost:8086}
+    infrastructure-url: ${SERVICE_SCHEME:http}://${INFRASTRUCTURE_SERVICE_HOST:localhost:8087}
 
 tavily:
   api-key: ${TAVILY_API_KEY:}

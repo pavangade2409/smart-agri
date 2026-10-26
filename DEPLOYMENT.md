@@ -1,40 +1,35 @@
-# Free Render test deployment
+# Free test deployment (Render)
 
-This repository includes a Render Blueprint for a temporary full-stack test
-environment. It creates the React site, API gateway, eight supporting Spring
-services, and a PostgreSQL database.
+The root `render.yaml` defines a Render Blueprint for the frontend, API gateway,
+backend services, and PostgreSQL database. The GitHub repository can remain
+private.
 
 ## Deploy
 
-1. Review and commit only the application and deployment files you intend to
-   publish. Do not commit local databases, logs, temporary files, or secrets.
-2. Push that branch to the GitHub repository connected to your Render account.
-3. In Render, choose **New > Blueprint**, select the repository and branch, and
-   review `render.yaml` before applying it.
-4. Wait for the services to finish building. Open the `smart-agri-frontend`
-   static-site URL and use that URL for browser testing.
+1. Commit and push the application and deployment files to the private GitHub
+   repository. Do not commit `.env` files, API keys, or database credentials.
+2. Sign in to <https://dashboard.render.com> with a GitHub account that can
+   access the repository.
+3. Select **New > Blueprint**, choose the `smart-agri` repository and the
+   branch containing `render.yaml`, then review and apply the Blueprint.
+4. Wait for the API gateway and backend services to become healthy, then open
+   the frontend URL from the Render dashboard.
+5. To enable farmer-agent AI features, configure `OLLAMA_BASE_URL` to a
+   reachable hosted Ollama-compatible endpoint and provide the needed model.
+   `TAVILY_API_KEY` is optional for web search. Never use `localhost` for a
+   model service hosted separately from Render.
 
-The Blueprint generates a JWT signing key and obtains PostgreSQL credentials
-from the Render database; neither is stored in this repository. The Tavily key
-is optional for startup but external search features need it. Ollama is not
-deployed by this Blueprint: AI inference requires an Ollama endpoint reachable
-from the farmer-agent service, configured with `SPRING_AI_OLLAMA_BASE_URL`.
+## Free-tier limitations
 
-## Free-plan limitations
-
-This is for disposable testing, not production or real farmer data. Render's
-free web services sleep after inactivity and can take about a minute to wake.
-The nine backend web services share the workspace's free instance-hour quota.
-The free PostgreSQL database is limited to 1 GB and expires after 30 days;
-Render deletes its data after the expiry grace period. Back up any test data
-you need to keep.
-
-Render free web services cannot receive private-network traffic, so the
-Blueprint connects the backend services through their public HTTPS hostnames.
-The API gateway only allows the configured frontend origin and local
-development origins.
-
-Render deploys from a connected Git branch. It does not deploy uncommitted
-files from this workstation. Check `git status` carefully before pushing: this
-workspace contains pre-existing local source changes, generated databases,
-logs, and temporary files that should not be included indiscriminately.
+- Free web services sleep after 15 minutes without traffic. A cold start may
+  take about a minute; the frontend uses a two-minute API timeout for testing.
+- Render's 750 free instance hours are shared across free web services, so
+  continuous activity across this multi-service deployment can use the
+  allowance quickly.
+- The free PostgreSQL database is limited to 1 GB and expires after 30 days.
+  Export needed data before expiry; do not use this deployment for production
+  or important data.
+- H2-backed crop, farm, sensor, and irrigation data is ephemeral and can be
+  lost when a free service restarts or redeploys.
+- Service and frontend URLs are public, but the source repository stays
+  private. Render generates the JWT secret; do not commit secrets.

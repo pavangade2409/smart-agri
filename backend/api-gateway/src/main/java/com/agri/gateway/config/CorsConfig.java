@@ -1,7 +1,7 @@
 package com.agri.gateway.config;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +15,8 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @Configuration
 public class CorsConfig {
 
-    @Value("${app.cors.frontend-origin:}")
-    private String frontendOrigin;
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}")
+    private String allowedOrigins;
 
     @Bean
     public CorsWebFilter corsWebFilter() {
@@ -24,17 +24,13 @@ public class CorsConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        List<String> allowedOrigins = new ArrayList<>(
-                List.of("http://localhost:3000", "http://localhost:5173")
+        configuration.setAllowedOrigins(
+                Arrays.stream(allowedOrigins.split(","))
+                        .map(String::trim)
+                        .filter(origin -> !origin.isEmpty())
+                        .map(origin -> origin.contains("://") ? origin : "https://" + origin)
+                        .toList()
         );
-        if (!frontendOrigin.isBlank()) {
-            String origin = frontendOrigin.startsWith("http://")
-                    || frontendOrigin.startsWith("https://")
-                    ? frontendOrigin
-                    : "https://" + frontendOrigin;
-            allowedOrigins.add(origin);
-        }
-        configuration.setAllowedOrigins(allowedOrigins);
 
         configuration.setAllowedMethods(
                 List.of(

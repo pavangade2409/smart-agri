@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   shutdown: graceful
 
 spring:
@@ -13,12 +13,12 @@ spring:
         webflux:
           httpclient:
             connect-timeout: 3000
-            response-timeout: 5s
+            response-timeout: ${GATEWAY_RESPONSE_TIMEOUT:5s}
           default-filters:
             - AddResponseHeader=X-Gateway, smart-agri-gateway
           routes:
             - id: auth-service
-              uri: ${AGRI_AUTH_SCHEME:http}://${AGRI_AUTH_HOST:localhost:8081}
+              uri: ${SERVICE_SCHEME:http}://${AUTH_SERVICE_HOST:localhost:8081}
               predicates:
                 - Path=/api/auth/**
               filters:
@@ -28,7 +28,7 @@ spring:
                     fallbackUri: forward:/fallback/auth
 
             - id: crop-service
-              uri: ${AGRI_CROP_SCHEME:http}://${AGRI_CROP_HOST:localhost:8085}
+              uri: ${SERVICE_SCHEME:http}://${CROP_SERVICE_HOST:localhost:8085}
               predicates:
                 - Path=/api/v1/crops/**
               filters:
@@ -45,7 +45,7 @@ spring:
                     fallbackUri: forward:/fallback/crop
 
             - id: farm-service
-              uri: ${AGRI_FARM_SCHEME:http}://${AGRI_FARM_HOST:localhost:8082}
+              uri: ${SERVICE_SCHEME:http}://${FARM_SERVICE_HOST:localhost:8082}
               predicates:
                 - Path=/api/v1/farms/**
               filters:
@@ -55,7 +55,7 @@ spring:
                     fallbackUri: forward:/fallback/farm
 
             - id: sensor-service
-              uri: ${AGRI_SENSOR_SCHEME:http}://${AGRI_SENSOR_HOST:localhost:8083}
+              uri: ${SERVICE_SCHEME:http}://${SENSOR_SERVICE_HOST:localhost:8083}
               predicates:
                 - Path=/api/v1/sensors/**
               filters:
@@ -65,7 +65,7 @@ spring:
                     fallbackUri: forward:/fallback/sensor
 
             - id: sensor-reading-service
-              uri: ${AGRI_SENSOR_SCHEME:http}://${AGRI_SENSOR_HOST:localhost:8083}
+              uri: ${SERVICE_SCHEME:http}://${SENSOR_SERVICE_HOST:localhost:8083}
               predicates:
                 - Path=/api/v1/sensor-readings/**
               filters:
@@ -75,7 +75,7 @@ spring:
                     fallbackUri: forward:/fallback/sensor
 
             - id: weather-service
-              uri: ${AGRI_WEATHER_SCHEME:http}://${AGRI_WEATHER_HOST:localhost:8084}
+              uri: ${SERVICE_SCHEME:http}://${WEATHER_SERVICE_HOST:localhost:8084}
               predicates:
                 - Path=/api/v1/weather/**
               filters:
@@ -89,7 +89,7 @@ spring:
                     fallbackUri: forward:/fallback/weather
 
             - id: irrigation-service
-              uri: ${AGRI_IRRIGATION_SCHEME:http}://${AGRI_IRRIGATION_HOST:localhost:8086}
+              uri: ${SERVICE_SCHEME:http}://${IRRIGATION_SERVICE_HOST:localhost:8086}
               predicates:
                 - Path=/api/v1/irrigation/**
               filters:
@@ -99,7 +99,7 @@ spring:
                     fallbackUri: forward:/fallback/irrigation
 
             - id: farmer-agent
-              uri: ${AGRI_FARMER_AGENT_SCHEME:http}://${AGRI_FARMER_AGENT_HOST:localhost:8090}
+              uri: ${SERVICE_SCHEME:http}://${FARMER_AGENT_HOST:localhost:8090}
               predicates:
                 - Path=/api/farmer-agent/**
 
