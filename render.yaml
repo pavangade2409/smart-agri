@@ -25,7 +25,7 @@ services:
         value: 120s
       - key: CORS_ALLOWED_ORIGINS
         fromService:
-          type: web
+          type: static
           name: smart-agri-frontend
           property: host
       - key: AUTH_SERVICE_HOST
