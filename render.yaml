@@ -1,3 +1,10 @@
+
+envVarGroups:
+  - name: smart-agri-shared-secrets
+    envVars:
+      - key: JWT_SECRET
+        sync: false
+
 databases:
   - name: smart-agri-db
     databaseName: smart_agri
@@ -14,11 +21,10 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
-      - key: SERVICE_MODULE
-        value: api-gateway
     healthCheckPath: /actuator/health
     envVars:
+      - key: SERVICE_MODULE
+        value: api-gateway
       - key: SERVICE_SCHEME
         value: https
       - key: GATEWAY_RESPONSE_TIMEOUT
@@ -71,11 +77,10 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
-      - key: SERVICE_MODULE
-        value: auth-service
     healthCheckPath: /actuator/health
     envVars:
+      - key: SERVICE_MODULE
+        value: auth-service
       - key: DB_HOST
         fromDatabase:
           name: smart-agri-db
@@ -96,8 +101,7 @@ services:
         fromDatabase:
           name: smart-agri-db
           property: password
-      - key: JWT_SECRET
-        generateValue: true
+      - fromGroup: smart-agri-shared-secrets
 
   - type: web
     name: smart-agri-crop
@@ -106,10 +110,40 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
+    healthCheckPath: /actuator/health
+    envVars:
       - key: SERVICE_MODULE
         value: crop-service
-    healthCheckPath: /actuator/health
+      - fromGroup: smart-agri-shared-secrets
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: DB_HOST
+        fromDatabase:
+          name: smart-agri-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: smart-agri-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: smart-agri-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: smart-agri-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: smart-agri-db
+          property: password
+      - key: SERVICE_SCHEME
+        value: https
+      - key: FARM_SERVICE_HOST
+        fromService:
+          type: web
+          name: smart-agri-farm
+          property: host
 
   - type: web
     name: smart-agri-farm
@@ -118,10 +152,11 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
+    healthCheckPath: /actuator/health
+    envVars:
       - key: SERVICE_MODULE
         value: farm-service
-    healthCheckPath: /actuator/health
+      - fromGroup: smart-agri-shared-secrets
 
   - type: web
     name: smart-agri-sensor
@@ -130,10 +165,47 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
+    healthCheckPath: /actuator/health
+    envVars:
       - key: SERVICE_MODULE
         value: sensor-service
-    healthCheckPath: /actuator/health
+      - fromGroup: smart-agri-shared-secrets
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVICE_SCHEME
+        value: https
+      - key: DB_HOST
+        fromDatabase:
+          name: smart-agri-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: smart-agri-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: smart-agri-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: smart-agri-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: smart-agri-db
+          property: password
+      - key: DB_POOL_SIZE
+        value: "5"
+      - key: FARM_SERVICE_HOST
+        fromService:
+          type: web
+          name: smart-agri-farm
+          property: host
+      - key: CROP_SERVICE_HOST
+        fromService:
+          type: web
+          name: smart-agri-crop
+          property: host
 
   - type: web
     name: smart-agri-weather
@@ -142,10 +214,10 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
+    healthCheckPath: /actuator/health
+    envVars:
       - key: SERVICE_MODULE
         value: weather-service
-    healthCheckPath: /actuator/health
 
   - type: web
     name: smart-agri-irrigation
@@ -154,13 +226,18 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
-      - key: SERVICE_MODULE
-        value: irrigation-service
     healthCheckPath: /actuator/health
     envVars:
+      - key: SERVICE_MODULE
+        value: irrigation-service
       - key: SERVICE_SCHEME
         value: https
+      - fromGroup: smart-agri-shared-secrets
+      - key: FARM_SERVICE_HOST
+        fromService:
+          type: web
+          name: smart-agri-farm
+          property: host
       - key: SENSOR_SERVICE_HOST
         fromService:
           type: web
@@ -179,11 +256,10 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
-      - key: SERVICE_MODULE
-        value: infrastructure-service
     healthCheckPath: /actuator/health
     envVars:
+      - key: SERVICE_MODULE
+        value: infrastructure-service
       - key: DB_HOST
         fromDatabase:
           name: smart-agri-db
@@ -212,13 +288,13 @@ services:
     region: oregon
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    dockerBuildArgs:
-      - key: SERVICE_MODULE
-        value: farmer-agent
     healthCheckPath: /actuator/health
     envVars:
+      - key: SERVICE_MODULE
+        value: farmer-agent
       - key: SERVICE_SCHEME
         value: https
+      - fromGroup: smart-agri-shared-secrets
       - key: DB_HOST
         fromDatabase:
           name: smart-agri-db
