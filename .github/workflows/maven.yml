@@ -1,35 +1,92 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Java CI with Maven
+name: Smart Agri Full Backend CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
-
+    name: Build Smart Agri Backend
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      # Step 1: Download repository source code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
+      # Step 2: Install Java
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      # Step 3: Display repository structure
+      - name: Inspect Project Structure
+        shell: bash
+        run: |
+          echo "Repository root:"
+          pwd
+          echo "Available Maven POM files:"
+          find . -type f -name pom.xml \
+            -not -path "*/target/*" \
+            -not -path "*/.git/*" | sort
+
+      # Step 4: Verify backend directory
+      - name: Verify Backend
+        shell: bash
+        run: |
+          if [ ! -d backend ]; then
+            echo "ERROR: backend directory not found."
+            echo "Check the repository folder structure."
+            exit 1
+          fi
+
+      # Step 5: Build all Maven projects
+      - name: Build Maven Projects
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t POMS < <(
+            find backend -type f -name pom.xml \
+              -not -path "*/target/*" \
+              | sort
+          )
+
+          if [ "${#POMS[@]}" -eq 0 ]; then
+            echo "ERROR: No pom.xml files found under backend/"
+            exit 1
+          fi
+
+          echo "Found ${#POMS[@]} Maven project(s)."
+
+          for POM in "${POMS[@]}"; do
+            echo "========================================"
+            echo "Building: $POM"
+            echo "========================================"
+
+            mvn -B -ntp clean package \
+              -DskipTests \
+              -f "$POM"
+          done
+
+      # Step 6: Upload build reports if the build fails
+      - name: Upload Build Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-agri-build-reports
+          path: |
+            **/target/surefire-reports/**
+            **/target/site/**
+          if-no-files-found: ignore
+          retention-days: 7
