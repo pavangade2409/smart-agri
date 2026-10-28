@@ -1,0 +1,111 @@
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+
+spring:
+  application:
+    name: api-gateway
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 3000
+            response-timeout: ${GATEWAY_RESPONSE_TIMEOUT:5s}
+          default-filters:
+            - AddResponseHeader=X-Gateway, smart-agri-gateway
+          routes:
+            - id: auth-service
+              uri: ${SERVICE_SCHEME:http}://${AUTH_SERVICE_HOST:localhost:8081}
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: authServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/auth
+
+            - id: crop-service
+              uri: ${SERVICE_SCHEME:http}://${CROP_SERVICE_HOST:localhost:8085}
+              predicates:
+                - Path=/api/v1/crops/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    methods: GET
+                    exceptions:
+                      - java.io.IOException
+                      - java.util.concurrent.TimeoutException
+                - name: CircuitBreaker
+                  args:
+                    name: cropServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/crop
+
+            - id: farm-service
+              uri: ${SERVICE_SCHEME:http}://${FARM_SERVICE_HOST:localhost:8082}
+              predicates:
+                - Path=/api/v1/farms/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: farmServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/farm
+
+            - id: sensor-service
+              uri: ${SERVICE_SCHEME:http}://${SENSOR_SERVICE_HOST:localhost:8083}
+              predicates:
+                - Path=/api/v1/sensors/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: sensorServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/sensor
+
+            - id: sensor-reading-service
+              uri: ${SERVICE_SCHEME:http}://${SENSOR_SERVICE_HOST:localhost:8083}
+              predicates:
+                - Path=/api/v1/sensor-readings/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: sensorReadingCircuitBreaker
+                    fallbackUri: forward:/fallback/sensor
+
+            - id: weather-service
+              uri: ${SERVICE_SCHEME:http}://${WEATHER_SERVICE_HOST:localhost:8084}
+              predicates:
+                - Path=/api/v1/weather/**
+              filters:
+                - name: Retry
+                  args:
+                    retries: 2
+                    methods: GET
+                - name: CircuitBreaker
+                  args:
+                    name: weatherServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/weather
+
+            - id: irrigation-service
+              uri: ${SERVICE_SCHEME:http}://${IRRIGATION_SERVICE_HOST:localhost:8086}
+              predicates:
+                - Path=/api/v1/irrigation/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: irrigationServiceCircuitBreaker
+                    fallbackUri: forward:/fallback/irrigation
+
+            - id: farmer-agent
+              uri: ${SERVICE_SCHEME:http}://${FARMER_AGENT_HOST:localhost:8090}
+              predicates:
+                - Path=/api/farmer-agent/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health

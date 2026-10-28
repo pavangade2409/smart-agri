@@ -35,7 +35,7 @@ public class SecurityConfig {
                 ).permitAll()
 
                 .requestMatchers(
-                    "/api/farms/**"
+                    "/api/v1/farms/**"
                 ).permitAll()
 
                 .requestMatchers(

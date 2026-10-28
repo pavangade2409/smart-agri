@@ -1,0 +1,145 @@
+.farmer-agent-page {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.farmer-agent-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.farmer-agent-eyebrow {
+  color: var(--accent-color);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.farmer-agent-header h2 {
+  margin: 6px 0;
+  font-size: 30px;
+}
+
+.farmer-agent-header p:last-child {
+  color: var(--text-light);
+}
+
+.agent-status {
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.agent-context,
+.agent-composer,
+.agent-conversation {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.agent-context {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.agent-context label,
+.agent-composer label {
+  display: grid;
+  gap: 6px;
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.agent-context input,
+.agent-composer textarea {
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 10px;
+  color: var(--text-dark);
+  background: #fff;
+}
+
+.agent-conversation {
+  min-height: 180px;
+  margin-bottom: 16px;
+}
+
+.agent-empty {
+  color: var(--text-light);
+  padding: 24px 0;
+  text-align: center;
+}
+
+.agent-answer,
+.agent-recommendation {
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent-color);
+  background: #f8fbf8;
+  margin-bottom: 12px;
+}
+
+.agent-recommendation {
+  border-left-color: #d28b35;
+  background: #fffaf2;
+}
+
+.agent-answer span,
+.agent-recommendation span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+
+.agent-answer p,
+.agent-recommendation p {
+  margin: 8px 0 0;
+  line-height: 1.55;
+}
+
+.agent-recommendation small {
+  display: block;
+  margin-top: 10px;
+  color: var(--text-light);
+}
+
+.agent-composer {
+  display: grid;
+  gap: 10px;
+}
+
+.agent-composer textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.agent-composer button {
+  justify-self: start;
+}
+
+.agent-composer button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .farmer-agent-header,
+  .agent-context {
+    flex-direction: column;
+  }
+
+  .agent-context {
+    display: grid;
+  }
+}

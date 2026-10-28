@@ -1,0 +1,59 @@
+server:
+  port: ${PORT:8086}
+
+spring:
+
+  application:
+    name: irrigation-service
+
+  datasource:
+    url: jdbc:h2:mem:irrigationdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+    open-in-view: false
+
+  h2:
+    console:
+      enabled: true
+
+  flyway:
+    enabled: true
+
+management:
+
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+
+  api-docs:
+    path: /api-docs
+
+  swagger-ui:
+    path: /swagger-ui.html
+
+services:
+
+  weather:
+    base-url: ${SERVICE_SCHEME:http}://${WEATHER_SERVICE_HOST:localhost:8084}
+
+  sensor:
+    base-url: ${SERVICE_SCHEME:http}://${SENSOR_SERVICE_HOST:localhost:8083}
+
+  device:
+    base-url: ${SERVICE_SCHEME:http}://${IRRIGATION_SERVICE_HOST:localhost:8086}

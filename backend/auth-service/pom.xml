@@ -23,11 +23,15 @@
     <description>Smart Agri Authentication Service</description>
 
     <properties>
-        <java.version>23</java.version>
+        <java.version>25</java.version>
     </properties>
 
     <dependencies>
-
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <scope>runtime</scope>
+</dependency>
         <!-- Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

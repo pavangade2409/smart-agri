@@ -1,0 +1,36 @@
+﻿.sidebar {
+  width: 250px;
+  background-color: var(--primary-color);
+  padding: 0;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 1rem 0;
+}
+
+.nav-item {
+  padding: 1rem 1.5rem;
+  color: var(--bg-light);
+  display: block;
+  transition: background-color 0.3s, color 0.3s;
+  border-left: 4px solid transparent;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background-color: rgba(75, 143, 93, 0.15);
+  border-left-color: var(--accent-color);
+}
+
+.nav-item.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-left-color: var(--accent-color);
+}
